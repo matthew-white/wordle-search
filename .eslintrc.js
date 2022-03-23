@@ -1,17 +1,25 @@
 module.exports = {
   root: true,
-  env: {
-    node: true,
+  extends: ['plugin:vue/vue3-essential', '@vue/airbnb'],
+  env: { node: true },
+  globals: {
+    defineEmits: 'readonly',
+    defineExpose: 'readonly',
+    defineProps: 'readonly',
   },
-  extends: [
-    'plugin:vue/vue3-essential',
-    '@vue/airbnb',
-  ],
-  parserOptions: {
-    ecmaVersion: 2020,
-  },
+  parserOptions: { ecmaVersion: 2020 },
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-  },
+    'arrow-parens': 'off',
+    'comma-dangle': 'off',
+    curly: 'off',
+    'implicit-arrow-linebreak': 'off',
+    'import/first': 'off',
+    'import/order': 'off',
+    'no-console': 'error',
+    'no-debugger': 'error',
+    'no-restricted-syntax': 'off',
+    'nonblock-statement-body-position': 'off',
+    'object-curly-newline': 'off',
+    'operator-linebreak': 'off'
+  }
 };
