@@ -48,8 +48,8 @@ defineExpose({ reset });
 
 #guess-form-guess {
   font-size: 22px;
-  height: 42px;
-  width: 234px;
+  height: 43px;
+  width: 239px;
 
   &::placeholder { font-size: 20px; }
 }

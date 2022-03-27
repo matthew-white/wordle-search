@@ -46,16 +46,14 @@ defineExpose({ focus });
 
   .letter {
     border: 0;
-    display: inline-block;
-    font-size: 35px;
+    font-size: 36px;
     font-weight: bold;
-    height: 42px;
+    height: 43px;
     line-height: 1;
     padding: 0;
-    text-align: center;
     text-transform: uppercase;
     user-select: none;
-    width: 42px;
+    width: 43px;
 
     + .letter { margin-left: 6px; }
   }
@@ -66,7 +64,7 @@ defineExpose({ focus });
 
   .btn {
     margin-left: 20px;
-    margin-top: 4px;
+    margin-top: 5px;
     vertical-align: top;
   }
 
