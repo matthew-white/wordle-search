@@ -21,7 +21,7 @@ const addGuess = (word) => {
 };
 const toggleState = (guessIndex, letterIndex) => {
   const letterState = guesses[guessIndex][letterIndex];
-  letterState[1] = (letterState[1] + 1) % 4;
+  letterState[1] = (letterState[1] + 1) % 3;
 };
 watch(statesCommitted, (value) => {
   if (value) nextTick(() => { guessForm.value.focus(); });

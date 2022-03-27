@@ -12,7 +12,7 @@ import { computed, ref, watchPostEffect } from 'vue';
 
 import InputLettersOnly from './input-letters-only.vue';
 
-import { last } from '../util/util';
+import { every, last } from '../util/util';
 
 const props = defineProps({
   guesses: {
@@ -35,76 +35,128 @@ const pattern = ref('');
 const excludeUncommon = ref(false);
 const excludeRepeating = ref(false);
 
-const stateLetters = computed(() => {
-  const result = [null, new Set(), new Map(), new Map()];
+const test = function test(count) {
+  return count >= this.min && (this.max == null || count <= this.max);
+};
+const letterStats = computed(() => {
+  const stats = new Map();
   for (const guess of props.guesses) {
+    const guessCounts = new Map();
+    const guessAbsent = new Set();
     for (let i = 0; i < 5; i += 1) {
       const [letter, state] = guess[i];
-      if (state === 1) {
-        result[1].add(letter);
-      } else {
-        const map = result[state];
-        if (!map.has(letter)) map.set(letter, []);
-        const indexes = map.get(letter);
-        if (!indexes.includes(i)) indexes.push(i);
+      if (!stats.has(letter)) {
+        stats.set(letter, {
+          // The indexes at which the letter has appeared in each state
+          indexes: [new Set(), new Set(), new Set()],
+          // We use countRange to track how many times the letter appears in the
+          // answer. Specifically, we track a floor and possibly a ceiling for
+          // that count. We track the letter's count rather than simply its
+          // presence/absence because a guess that repeats a letter may provide
+          // more information than presence/absence.
+          countRange: { min: 0, test }
+        });
       }
+      stats.get(letter).indexes[state].add(i);
+
+      if (!guessCounts.has(letter)) guessCounts.set(letter, 0);
+      if (state === 0)
+        guessAbsent.add(letter);
+      else
+        guessCounts.set(letter, guessCounts.get(letter) + 1);
+    }
+    for (const [letter, count] of guessCounts.entries()) {
+      const { countRange } = stats.get(letter);
+      if (count > countRange.min) countRange.min = count;
+      if (guessAbsent.has(letter)) countRange.max = count;
     }
   }
-  return result;
+  // Probably not needed given how we use countRange, but also shouldn't hurt.
+  for (const { countRange, indexes } of stats.values()) {
+    if (countRange.min < indexes[2].size) countRange.min = indexes[2].size;
+  }
+  return stats;
 });
+
+const countLetters = (word) => {
+  const counts = new Map();
+  for (const letter of word) {
+    const count = counts.get(letter);
+    counts.set(letter, count == null ? 1 : count + 1);
+  }
+  return counts;
+};
 const matchers = {
+  matchAll: (word) => {
+    const counts = countLetters(word);
+    return every(letterStats.value.entries(), ([letter, { countRange, indexes }]) => {
+      const count = counts.get(letter);
+      return countRange.test(count != null ? count : 0) &&
+        every(indexes[0], (i) => word[i] !== letter) &&
+        every(indexes[1], (i) => word[i] !== letter) &&
+        every(indexes[2], (i) => word[i] === letter);
+    });
+  },
+  withoutCorrect: (word) => {
+    const counts = countLetters(word);
+    return every(letterStats.value.entries(), ([letter, { countRange, indexes }]) => {
+      const count = counts.get(letter);
+      return countRange.test((count != null ? count : 0) + indexes[2].size) &&
+        every(indexes[0], (i) => word[i] !== letter) &&
+        every(indexes[1], (i) => word[i] !== letter) &&
+        every(indexes[2], (i) => word[i] !== letter);
+    });
+  },
   matchAbsent: (word) =>
-    word.split('').every(letter => !stateLetters.value[1].has(letter)),
-  matchPresent: (word) => {
-    for (const [letter, indexes] of stateLetters.value[2].entries()) {
-      if (!word.includes(letter) || indexes.some(i => word[i] === letter))
-        return false;
-    }
-    return true;
-  },
-  matchCorrect: (word) => {
-    for (const [letter, indexes] of stateLetters.value[3].entries()) {
-      if (indexes.some(i => word[i] !== letter)) return false;
-    }
-    return true;
-  },
-  matchNoCorrect: (word) => {
-    for (const [letter, indexes] of stateLetters.value[3].entries()) {
-      if (indexes.some(i => word[i] === letter)) return false;
-    }
-    return true;
-  },
-  matchAll: (word) => matchers.matchAbsent(word) &&
-    matchers.matchPresent(word) && matchers.matchCorrect(word),
-  withoutCorrect: (word) => matchers.matchAbsent(word) &&
-    matchers.matchPresent(word) && matchers.matchNoCorrect(word),
-  allNew: (word) => word.split('').every(letter =>
-    !stateLetters.value[1].has(letter) && !stateLetters.value[2].has(letter) &&
-    !stateLetters.value[3].has(letter))
+    every(countLetters(word).entries(), ([letter, count]) => {
+      const stats = letterStats.value.get(letter);
+      if (stats == null) return true;
+      const { max } = stats.countRange;
+      return max == null ||
+        (count <= max && every(stats.indexes[0], (i) => word[i] !== letter));
+    }),
+  allNew: (word) => every(word, (letter) => !letterStats.value.has(letter))
 };
 
+// Set of letters that have been guessed "present" and that we know have not
+// been guessed correctly enough times
 const presentNotCorrect = computed(() => {
-  const result = new Map(stateLetters.value[2]);
-  for (const letter of stateLetters.value[3].keys())
-    result.delete(letter);
-  return result;
+  const letters = new Set();
+  for (const [letter, { indexes, countRange }] of letterStats.value.entries()) {
+    if (indexes[1].size !== 0 && indexes[2].size < countRange.min)
+      letters.add(letter);
+  }
+  return letters;
 });
+// Similar to matchers.withoutCorrect().
 const matchPresentCount = (countToMatch) => (word) => {
-  if (!matchers.matchAbsent(word) || !matchers.matchNoCorrect(word))
-    return false;
-
-  let count = 0;
-  for (const [letter, indexes] of presentNotCorrect.value.entries()) {
-    if (word.includes(letter)) {
-      if (indexes.some(i => word[i] === letter)) return false;
-      count += 1;
-      if (count > countToMatch) return false;
+  let presentCount = 0;
+  const letterCounts = countLetters(word);
+  for (const [letter, { indexes, countRange }] of letterStats.value.entries()) {
+    const letterCount = letterCounts.get(letter);
+    if (presentNotCorrect.value.has(letter) && letterCount != null) {
+      presentCount += 1;
+      if (presentCount > countToMatch) return false;
+    }
+    if (!(presentNotCorrect.value.has(letter) && letterCount == null)) {
+      const countWithCorrect = (letterCount != null ? letterCount : 0) +
+        indexes[2].size;
+      if (!(countRange.test(countWithCorrect) &&
+        every(indexes[0], (i) => word[i] !== letter) &&
+        every(indexes[1], (i) => word[i] !== letter) &&
+        every(indexes[2], (i) => word[i] !== letter)))
+        return false;
     }
   }
-  return count === countToMatch;
+  return presentCount === countToMatch;
 };
 matchers.matchPresent1 = matchPresentCount(1);
 matchers.matchPresent2 = matchPresentCount(2);
+
+const noneAbsent = computed(() =>
+  every(letterStats.value.values(), ({ indexes }) => indexes[0].size === 0));
+const noneCorrect = computed(() =>
+  every(letterStats.value.values(), ({ indexes }) => indexes[2].size === 0));
 
 const filters = [
   computed(() => matchers[match.value]),
@@ -184,7 +236,7 @@ const reset = () => {
     <div class="form-group">
       <select v-model="match" class="form-control" aria-label="Word list">
         <option value="matchAll">Match guesses</option>
-        <option value="withoutCorrect" :disabled="stateLetters[3].size === 0">
+        <option value="withoutCorrect" :disabled="noneCorrect">
           Match except for green
         </option>
         <option value="matchPresent1" :disabled="presentNotCorrect.size === 0">
@@ -193,9 +245,7 @@ const reset = () => {
         <option value="matchPresent2" :disabled="presentNotCorrect.size < 2">
           Match 2 yellow letters
         </option>
-        <option value="matchAbsent" :disabled="stateLetters[1].size === 0">
-          Match gray
-        </option>
+        <option value="matchAbsent" :disabled="noneAbsent">Match gray</option>
         <option value="allNew">All new letters</option>
         <option value="">Entire word list</option>
       </select>

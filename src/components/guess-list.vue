@@ -1,7 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
-
-import { last } from '../util/util';
+import { ref } from 'vue';
 
 const props = defineProps({
   guesses: {
@@ -12,10 +10,8 @@ const props = defineProps({
 });
 defineEmits(['toggle-state', 'update:statesCommitted']);
 
-const stateClasses = ['tbd', 'absent', 'present', 'correct'];
+const stateClasses = ['absent', 'present', 'correct'];
 const disabled = (i) => props.statesCommitted || i < props.guesses.length - 1;
-const statesSet = computed(() =>
-  last(props.guesses).every(([, state]) => state !== 0));
 
 const el = ref(null);
 const focus = () => {
@@ -36,12 +32,10 @@ defineExpose({ focus });
         @click="$emit('toggle-state', i, j)">
         <span>{{ letter }}</span>
       </button>
-      <template v-if="!disabled(i)">
-        <button v-show="statesSet" type="button" class="btn btn-default"
-          @click="$emit('update:statesCommitted', true)">
-          Done
-        </button>
-      </template>
+      <button v-if="!disabled(i)" type="button" class="btn btn-default"
+        @click="$emit('update:statesCommitted', true)">
+        Done
+      </button>
     </div>
   </div>
 </template>
@@ -66,10 +60,6 @@ defineExpose({ focus });
     + .letter { margin-left: 6px; }
   }
 
-  .tbd {
-    background-color: #111;
-    border: 2px solid #666;
-  }
   .absent { background-color: #444; }
   .present { background-color: #f0ad4e; }
   .correct { background-color: darken(#5cb85c, 6%); }
