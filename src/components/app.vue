@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, reactive, ref, watch } from 'vue';
+import { nextTick, reactive, ref } from 'vue';
 
 import FilterForm from './filter-form.vue';
 import GuessForm from './guess-form.vue';
@@ -23,9 +23,6 @@ const toggleState = (guessIndex, letterIndex) => {
   const letterState = guesses[guessIndex][letterIndex];
   letterState[1] = (letterState[1] + 1) % 3;
 };
-watch(statesCommitted, (value) => {
-  if (value) nextTick(() => { guessForm.value.focus(); });
-});
 </script>
 
 <template>

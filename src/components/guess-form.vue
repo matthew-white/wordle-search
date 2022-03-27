@@ -19,9 +19,8 @@ const submit = () => {
     input.value.reportValidity();
   }
 };
-const focus = () => { input.value.focus(); };
 
-defineExpose({ reset, focus });
+defineExpose({ reset });
 </script>
 
 <template>
