@@ -213,6 +213,9 @@ const filtered = filters.map((filter, i) => computed(() => {
   const words = i === 0 ? wordList : filtered[i - 1].value;
   return filter.value != null ? words.filter(filter.value) : words;
 }));
+// If FilterForm is about to be unmounted after a new guess, we don't want to
+// emit `filter` even though `guesses` will have changed: this is why we
+// watchPostEffect() rather than watchEffect().
 watchPostEffect(() => { emit('filter', last(filtered).value); });
 
 const reset = () => {
