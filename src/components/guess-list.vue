@@ -22,8 +22,9 @@ defineExpose({ focus });
 </script>
 
 <template>
-  <div id="guess-list" ref="el">
-    <p v-show="!statesCommitted" class="instruction-block">Click each letter to set its color.</p>
+  <div id="guess-list" ref="el"
+    :class="{ 'states-committed': statesCommitted }">
+    <p class="instruction-block">Click each letter to set its color.</p>
     <!-- eslint-disable-next-line vue/require-v-for-key -->
     <div v-for="(guess, i) in guesses" class="guess">
       <!-- eslint-disable-next-line vue/require-v-for-key -->
@@ -42,6 +43,8 @@ defineExpose({ focus });
 
 <style lang="scss">
 #guess-list {
+  &.states-committed .instruction-block { display: none; }
+
   .letter {
     border: 0;
     font-size: 36px;
@@ -59,6 +62,8 @@ defineExpose({ focus });
   .absent { background-color: #444; }
   .present { background-color: #f0ad4e; }
   .correct { background-color: darken(#5cb85c, 6%); }
+
+  &:not(.states-committed) .letter[disabled] { cursor: not-allowed; }
 
   .btn {
     margin-left: 25px;
