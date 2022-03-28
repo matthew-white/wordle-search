@@ -38,7 +38,7 @@ defineExpose({ reset });
 
 <style lang="scss">
 #guess-form {
-  margin-bottom: 30px;
+  .form-group { margin-bottom: 0; }
 
   &:not(.first-guess) label {
     font-size: 22px;

@@ -105,10 +105,11 @@ h1 {
 }
 
 #word-list-help .icon { margin-left: 10px; }
+#guess-list, #guess-form { margin-bottom: 35px; }
 
 hr {
   margin-bottom: 30px;
-  margin-top: 50px;
+  margin-top: 51px;
   opacity: 0.9;
 }
 

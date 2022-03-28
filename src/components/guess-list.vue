@@ -42,8 +42,6 @@ defineExpose({ focus });
 
 <style lang="scss">
 #guess-list {
-  margin-bottom: 30px;
-
   .letter {
     border: 0;
     font-size: 36px;
