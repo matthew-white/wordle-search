@@ -84,6 +84,7 @@ body {
 }
 
 h1 {
+  align-items: baseline;
   display: flex;
   flex-wrap: wrap;
   font-size: 32px;
@@ -92,10 +93,15 @@ h1 {
 }
 #title { margin-right: 18px; }
 #subtitle {
-  font-size: 20px;
+  flex-basis: 100%;
+  font-size: 18px;
   margin-top: 12px;
 
-  @media (max-width: 767px) { font-size: 18px; }
+  @media (min-width: 992px) {
+    flex-basis: auto;
+    font-size: 20px;
+    margin-top: 0;
+  }
 }
 
 #word-list-help .icon { margin-left: 10px; }
