@@ -32,6 +32,7 @@ defineExpose({ reset });
       </label>
       <InputLettersOnly id="guess-form-guess" ref="input" v-model="guess"
         placeholder="5-letter word" maxlength="5" autofocus/>
+      <button type="submit" class="btn btn-default">Done</button>
     </div>
   </form>
 </template>
@@ -39,18 +40,26 @@ defineExpose({ reset });
 <style lang="scss">
 #guess-form {
   .form-group { margin-bottom: 0; }
+  label { display: block; }
+
+  .form-control {
+    display: inline-block;
+    font-size: 22px;
+    height: 43px;
+    width: 239px;
+
+    &::placeholder { font-size: 20px; }
+  }
+
+  .btn {
+    margin-left: 25px;
+    margin-top: 5px;
+    vertical-align: top;
+  }
 
   &:not(.first-guess) label {
     font-size: 22px;
     margin-bottom: 12px;
   }
-}
-
-#guess-form-guess {
-  font-size: 22px;
-  height: 43px;
-  width: 239px;
-
-  &::placeholder { font-size: 20px; }
 }
 </style>

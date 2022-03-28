@@ -61,7 +61,7 @@ defineExpose({ focus });
   .correct { background-color: darken(#5cb85c, 6%); }
 
   .btn {
-    margin-left: 20px;
+    margin-left: 25px;
     margin-top: 5px;
     vertical-align: top;
   }
