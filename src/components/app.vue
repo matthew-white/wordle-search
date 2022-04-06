@@ -62,6 +62,7 @@ body {
   color: #fff;
   font-size: 16px;
   min-height: 100vh;
+  min-width: 360px;
   overflow-y: scroll;
   padding-bottom: 95px;
   position: relative;
