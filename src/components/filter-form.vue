@@ -276,38 +276,28 @@ const reset = () => {
         <option value="5">5 AEIOUY</option>
       </select>
     </div>
-    <div class="row">
-      <div class="col-xs-6">
-        <div class="form-group">
-          <InputLettersOnly v-model="startWith" placeholder="Starts with"
-            aria-label="Starts with" spellcheck="false" autocorrect="off"/>
-        </div>
+    <div class="cols">
+      <div class="form-group">
+        <InputLettersOnly v-model="startWith" placeholder="Starts with"
+          aria-label="Starts with" spellcheck="false" autocorrect="off"/>
       </div>
-      <div class="col-xs-6">
-        <div class="form-group">
-          <InputLettersOnly v-model="endWith" placeholder="Ends with"
-            aria-label="Ends with" spellcheck="false" autocorrect="off"/>
-        </div>
+      <div class="form-group">
+        <InputLettersOnly v-model="endWith" placeholder="Ends with"
+          aria-label="Ends with" spellcheck="false" autocorrect="off"/>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xs-4">
-        <div class="form-group">
-          <InputLettersOnly v-model="letter1" placeholder="2nd letter"
-            aria-label="2nd letter" maxlength="1"/>
-        </div>
+    <div class="cols">
+      <div class="form-group">
+        <InputLettersOnly v-model="letter1" placeholder="2nd letter"
+          aria-label="2nd letter" maxlength="1"/>
       </div>
-      <div class="col-xs-4">
-        <div class="form-group">
-          <InputLettersOnly v-model="letter2" placeholder="3rd letter"
-            aria-label="3rd letter" maxlength="1"/>
-        </div>
+      <div class="form-group">
+        <InputLettersOnly v-model="letter2" placeholder="3rd letter"
+          aria-label="3rd letter" maxlength="1"/>
       </div>
-      <div class="col-xs-4">
-        <div class="form-group">
-          <InputLettersOnly v-model="letter3" placeholder="4th letter"
-            aria-label="4th letter" maxlength="1"/>
-        </div>
+      <div class="form-group">
+        <InputLettersOnly v-model="letter3" placeholder="4th letter"
+          aria-label="4th letter" maxlength="1"/>
       </div>
     </div>
     <div class="form-group">
@@ -332,5 +322,16 @@ const reset = () => {
 </template>
 
 <style lang="scss">
-#filter-form { max-width: min(325px, 90%); }
+#filter-form {
+  max-width: 325px;
+
+  .cols {
+    display: flex;
+
+    > * {
+      flex: 1;
+      + * { margin-left: 20px; }
+    }
+  }
+}
 </style>

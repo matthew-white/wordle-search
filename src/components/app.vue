@@ -68,7 +68,8 @@ body {
   position: relative;
 }
 
-.icon, .checkbox label { user-select: none; }
+.form-control { font-size: 16px; }
+.checkbox label, .icon { user-select: none; }
 
 .instruction-block {
   color: lighten(#337ab7, 25%);
