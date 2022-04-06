@@ -31,7 +31,8 @@ defineExpose({ reset });
         {{ first ? 'What was your guess?' : 'Once you’ve made your next guess, type it here.' }}
       </label>
       <InputLettersOnly id="guess-form-guess" ref="input" v-model="guess"
-        placeholder="5-letter word" maxlength="5" autofocus/>
+        placeholder="5-letter word" maxlength="5" autofocus
+        enterkeyhint="done"/>
       <button type="submit" class="btn btn-default">Done</button>
     </div>
   </form>

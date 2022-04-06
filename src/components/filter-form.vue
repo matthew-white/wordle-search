@@ -256,12 +256,14 @@ const reset = () => {
     <div class="form-group">
       <InputLettersOnly v-model="contain"
         placeholder="Contains all of the letters (in any order)"
-        aria-label="Contains all of the letters (in any order)"/>
+        aria-label="Contains all of the letters (in any order)"
+        spellcheck="false" autocorrect="off"/>
     </div>
     <div class="form-group">
       <InputLettersOnly v-model="notContain"
         placeholder="Does not contain any of the letters"
-        aria-label="Does not contain any of the letters"/>
+        aria-label="Does not contain any of the letters" spellcheck="false"
+        autocorrect="off"/>
     </div>
     <div class="form-group">
       <select v-model="vowelCount" class="form-control"
@@ -278,13 +280,13 @@ const reset = () => {
       <div class="col-xs-6">
         <div class="form-group">
           <InputLettersOnly v-model="startWith" placeholder="Starts with"
-            aria-label="Starts with"/>
+            aria-label="Starts with" spellcheck="false" autocorrect="off"/>
         </div>
       </div>
       <div class="col-xs-6">
         <div class="form-group">
           <InputLettersOnly v-model="endWith" placeholder="Ends with"
-            aria-label="Ends with"/>
+            aria-label="Ends with" spellcheck="false" autocorrect="off"/>
         </div>
       </div>
     </div>
@@ -311,7 +313,8 @@ const reset = () => {
     <div class="form-group">
       <input v-model="pattern" class="form-control input-letters"
         placeholder="Matches the regular expression"
-        aria-label="Matches the regular expression" autocomplete="off">
+        aria-label="Matches the regular expression" autocomplete="off"
+        spellcheck="false" autocorrect="off">
     </div>
     <div class="checkbox">
       <label>
