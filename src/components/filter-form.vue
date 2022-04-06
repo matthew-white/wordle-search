@@ -329,5 +329,5 @@ const reset = () => {
 </template>
 
 <style lang="scss">
-#filter-form { max-width: 325px; }
+#filter-form { max-width: min(325px, 90%); }
 </style>
